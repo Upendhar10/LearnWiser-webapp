@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { User } from '../models/user.model';
+import { generateJWTtoken, verifyJWTtoken } from '../utils/jwt';
 
 const registerUser = async (req: Request, res: Response) => {
   try {
@@ -71,12 +72,18 @@ const loginUser = async (req: Request, res: Response) => {
       });
     }
 
+    if (!email.includes('@')) {
+      return res.status(400).json({
+        message: 'Invalid email address',
+      });
+    }
+
     // check if user exists in the database
     const reqUser = await User.findOne({ email });
 
     if (!reqUser) {
-      return res.status(401).json({
-        message: 'Invalid Credentials',
+      return res.status(404).json({
+        message: 'User not Found!',
       });
     }
 
@@ -89,8 +96,15 @@ const loginUser = async (req: Request, res: Response) => {
       });
     }
 
+    // Generate JWT
+    const token = generateJWTtoken({
+      userId: reqUser._id.toString(),
+      role: reqUser.role,
+    });
+
     return res.status(200).json({
       message: 'Login Sucessfull',
+      token,
       user: {
         id: reqUser._id,
         name: reqUser.name,

@@ -7,3 +7,4 @@ if (!MONGODB_URI) {
 
 export const ADMIN_EMAIL: string = process.env.ADMIN_EMAIL as string;
 export const ADMIN_PASSWORD: string = process.env.ADMIN_PASSWORD as string;
+export const JWT_SECRET: string = process.env.JWT_SECRET as string;
