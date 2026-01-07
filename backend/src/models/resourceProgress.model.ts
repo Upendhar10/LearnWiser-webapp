@@ -1,6 +1,6 @@
-import { Schema, model, Types } from 'mongoose';
+import { Schema, model, Types, Document } from 'mongoose';
 
-export interface ResourceProgressDocument {
+export interface ResourceProgressDocument extends Document {
   userId: Types.ObjectId;
   goalId: Types.ObjectId;
   resourceId: Types.ObjectId;

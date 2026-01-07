@@ -1,12 +1,14 @@
-import { Schema, model, Types } from 'mongoose';
+import { Schema, model, Types, Document } from 'mongoose';
 
-export interface GoalDocument {
+export interface GoalDocument extends Document {
   userId: Types.ObjectId;
   title: string;
   description?: string;
   status: 'not_started' | 'in_progress' | 'completed' | 'dropped';
   startDate?: Date;
   targetEndDate?: Date;
+  isDeleted: boolean;
+  deletedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -45,6 +47,16 @@ const goalSchema = new Schema<GoalDocument>(
     },
 
     targetEndDate: {
+      type: Date,
+    },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+
+    deletedAt: {
       type: Date,
     },
   },
