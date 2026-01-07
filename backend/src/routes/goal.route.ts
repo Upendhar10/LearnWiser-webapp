@@ -1,20 +1,31 @@
 import { Router } from 'express';
 import authMiddleware from '../middlewares/auth.middleware';
 
+import {
+  createGoal,
+  getAllGoals,
+  getGoalById,
+  updateGoal,
+  updateGoalStatus,
+  deleteGoal,
+} from '../controllers/goal.controller';
+
 const router = Router();
 
+router.use(authMiddleware);
+
 // GET Route
-router.get('/', authMiddleware, getAllGoals);
-router.get('/:id', authMiddleware, getGoalById);
+router.get('/', getAllGoals);
+router.get('/:goalId', getGoalById);
 
 // POST route
-router.get('/', authMiddleware, createNewGoal);
+router.post('/', createGoal);
 
 // Update
-router.put('/:id', authMiddleware, updateGoal);
-router.patch('/:id/status', authMiddleware, updateGoalStatus);
+router.patch('/:goalId', updateGoal);
+router.patch('/:goalId/status', updateGoalStatus);
 
 // delete
-router.delete(':/id', authMiddleware, deleteGoal);
+router.delete('/:goalId', deleteGoal);
 
 export default router;
