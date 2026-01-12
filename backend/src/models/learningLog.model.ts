@@ -5,6 +5,8 @@ export interface LearningLogDocument extends Document {
   goalId: Types.ObjectId;
   resourceId?: Types.ObjectId;
 
+  logId: string;
+
   title: string;
   notes: string;
 
@@ -44,6 +46,12 @@ const learningLogSchema = new Schema<LearningLogDocument>(
       maxlength: 120,
     },
 
+    logId: {
+      type: String,
+      unique: true,
+      index: true,
+    },
+
     notes: {
       type: String,
       required: true,
@@ -59,12 +67,22 @@ const learningLogSchema = new Schema<LearningLogDocument>(
     effortLevel: {
       type: String,
       enum: ['low', 'medium', 'high'],
+      default: 'medium',
     },
   },
   {
     timestamps: true,
   },
 );
+
+learningLogSchema.pre('save', function () {
+  if (this.logId) return;
+
+  const userShortId = this.userId.toString().slice(-3);
+  const randomStr = Math.random().toString(36).substring(2, 6);
+
+  this.logId = `log_${userShortId}_${randomStr}`;
+});
 
 export const LearningLog = model<LearningLogDocument>(
   'LearningLog',

@@ -7,9 +7,11 @@ app.use(express.json());
 import authRouter from './routes/auth.route';
 import goalRouter from './routes/goal.route';
 import resourceRouter from './routes/resource.route';
+import learningLogRouter from './routes/learningLog.route';
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/goals', goalRouter);
 app.use('/api/v1/goals/:goalId/resources', resourceRouter);
+app.use('/api/v1/goals/:goalId/logs', learningLogRouter);
 
 export default app;
