@@ -7,7 +7,11 @@ export interface ResourceDocument extends Document {
   resourceId: string;
 
   title: string;
-  type: 'video' | 'article' | 'course' | 'book' | 'docs' | 'other';
+  type: 'video' | 'article' | 'course' | 'book' | 'docs';
+
+  totalValue: number;
+  totalUnit: 'pages' | 'minutes' | 'modules';
+
   sourceUrl?: string;
   difficulty?: 'beginner' | 'intermediate' | 'advanced';
   instructor?: string;
@@ -37,6 +41,7 @@ const resourceSchema = new Schema<ResourceDocument>(
 
     resourceId: {
       type: String,
+      required: true,
       unique: true,
       trim: true,
       maxlength: 150,
@@ -52,9 +57,21 @@ const resourceSchema = new Schema<ResourceDocument>(
 
     type: {
       type: String,
-      enum: ['video', 'article', 'course', 'book', 'docs', 'other'],
+      enum: ['video', 'article', 'course', 'book', 'docs'],
       required: true,
       index: true,
+    },
+
+    totalValue: {
+      type: Number,
+      min: 1,
+      required: true,
+    },
+
+    totalUnit: {
+      type: String,
+      enum: ['pages', 'minutes', 'modules'],
+      required: true,
     },
 
     sourceUrl: {
@@ -88,6 +105,29 @@ const resourceSchema = new Schema<ResourceDocument>(
   },
 );
 
+// Enforce type → unit consistency
+resourceSchema.pre('validate', function (this: ResourceDocument) {
+  const allowedUnitsByType: Record<
+    ResourceDocument['type'],
+    ResourceDocument['totalUnit'][]
+  > = {
+    book: ['pages'],
+    docs: ['pages'],
+    article: ['minutes'],
+    video: ['minutes'],
+    course: ['modules'],
+  };
+
+  const allowed = allowedUnitsByType[this.type];
+
+  if (!allowed.includes(this.totalUnit)) {
+    throw new Error(
+      `Resource type "${this.type}" only supports units: ${allowed.join(', ')}`,
+    );
+  }
+});
+
+// Generate resourceId
 resourceSchema.pre('save', function () {
   if (this.resourceId) return;
 
@@ -97,5 +137,8 @@ resourceSchema.pre('save', function () {
 
   this.resourceId = `res_${userShortId}_${randomStr}`;
 });
+
+// relation mapping
+resourceSchema.index({ userId: 1, goalId: 1, isDeleted: 1 });
 
 export const Resource = model<ResourceDocument>('Resource', resourceSchema);

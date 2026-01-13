@@ -1,4 +1,3 @@
-// resource.controller.ts
 import { Request, Response } from 'express';
 import { Resource } from '../models/resource.model';
 import { Goal } from '../models/goal.model';
@@ -8,11 +7,20 @@ export const createResource = async (req: Request, res: Response) => {
   const { goalId } = req.params;
   const userId = req.user.userId;
 
-  const { title, type, sourceUrl, difficulty, instructor } = req.body;
+  const {
+    title,
+    type,
+    totalValue,
+    totalUnit,
+    sourceUrl,
+    difficulty,
+    instructor,
+  } = req.body;
 
-  if (!title || !type) {
+  // Basic validation
+  if (!title || !type || !totalValue || !totalUnit) {
     return res.status(400).json({
-      message: 'Title and type are mandatory fields',
+      message: 'title, type, totalValue and totalUnit are required',
     });
   }
 
@@ -29,9 +37,11 @@ export const createResource = async (req: Request, res: Response) => {
 
   const resource = await Resource.create({
     userId,
-    goalId: goal._id, // ✅ store ObjectId
+    goalId: goal._id, // store ObjectId
     title,
     type,
+    totalValue,
+    totalUnit,
     sourceUrl,
     difficulty,
     instructor,
@@ -88,12 +98,14 @@ export const updateResource = async (req: Request, res: Response) => {
   const allowedUpdates = [
     'title',
     'type',
+    'totalValue',
+    'totalUnit',
     'sourceUrl',
     'difficulty',
     'instructor',
   ];
 
-  const updates: Record<string, any> = {};
+  const updates: Partial<Record<(typeof allowedUpdates)[number], any>> = {};
   for (const key of allowedUpdates) {
     if (req.body[key] !== undefined) {
       updates[key] = req.body[key];
@@ -107,7 +119,10 @@ export const updateResource = async (req: Request, res: Response) => {
       isDeleted: false,
     },
     updates,
-    { new: true },
+    {
+      new: true,
+      runValidators: true, // important for schema validation
+    },
   );
 
   if (!resource) {
