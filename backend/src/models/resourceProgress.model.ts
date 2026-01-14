@@ -7,9 +7,8 @@ export interface ResourceProgressDocument extends Document {
 
   status: 'not_started' | 'in_progress' | 'completed' | 'dropped';
 
-  // Raw progress signal (optional & flexible)
-  progressValue?: number;
-  progressUnit?: 'percent' | 'pages' | 'minutes' | 'lessons';
+  // Absolute progress (same unit as resource.totalUnit)
+  consumedValue: number;
 
   // Drop intelligence (only meaningful if status === "dropped")
   dropReason?:
@@ -56,21 +55,17 @@ const resourceProgressSchema = new Schema<ResourceProgressDocument>(
       index: true,
     },
 
+    consumedValue: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
     status: {
       type: String,
       enum: ['not_started', 'in_progress', 'completed', 'dropped'],
       default: 'not_started',
       index: true,
-    },
-
-    progressValue: {
-      type: Number,
-      min: 0,
-    },
-
-    progressUnit: {
-      type: String,
-      enum: ['percent', 'pages', 'minutes', 'lessons'],
     },
 
     dropReason: {
