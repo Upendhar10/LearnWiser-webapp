@@ -1,5 +1,16 @@
+import cors from 'cors';
 import express from 'express';
 const app = express();
+
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  }),
+);
+
+// VERY IMPORTANT
+// app.options('*', cors());
 
 app.use(express.json());
 
