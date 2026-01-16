@@ -120,4 +120,28 @@ const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-export { registerUser, loginUser };
+const getUserInfo = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!.userId;
+
+    const user = await User.findById(userId).select('_id name email createdAt');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    console.log(user);
+
+    return res.status(200).json({
+      user,
+      message: 'User fetched successfully',
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: 'Internal Server Error!',
+    });
+  }
+};
+
+export { registerUser, loginUser, getUserInfo };
