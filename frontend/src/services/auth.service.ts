@@ -16,6 +16,9 @@ export const authService = {
   login(payload: LoginPayload) {
     return axiosClient.post("/auth/login", payload);
   },
+  logout() {
+    localStorage.removeItem("authToken");
+  },
   register(payload: RegisterPayload) {
     return axiosClient.post("/auth/register", payload);
   },

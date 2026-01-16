@@ -17,8 +17,7 @@ const axiosClient = axios.create({
 // Request interceptor (auth)
 axiosClient.interceptors.request.use(
   (config) => {
-    // Later: get token from redux / localStorage
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("authToken");
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
