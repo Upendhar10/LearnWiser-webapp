@@ -3,8 +3,6 @@ import { env } from "@/config/env";
 
 const API_BASE_URL = env.API_BASE_URL;
 
-console.log(API_BASE_URL);
-
 // base instance
 const axiosClient = axios.create({
   baseURL: API_BASE_URL,
@@ -21,6 +19,10 @@ axiosClient.interceptors.request.use(
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      // config.headers = {
+      //   ...config.headers,
+      //   Authorization: `Bearer ${token}`,
+      // };
     }
 
     return config;
@@ -32,8 +34,14 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Auto logout on unauthorized
+    if (error.response?.status === 401) {
+      localStorage.removeItem("authToken");
+      window.location.href = "/login";
+    }
+
     const normalizedError = {
-      status: error.response?.status,
+      status: error.response?.status ?? 500,
       message:
         error.response?.data?.message ||
         error.message ||

@@ -49,13 +49,12 @@ export function LoginForm({
       dispatch(
         loginSuccess({
           token: res.data.token,
-          user: res.data.user,
         })
       );
 
-      navigate("/dashboard");
+      navigate("/dashboad");
 
-      console.log("Login Sucessfull", res.data);
+      console.log("Login Successfull", res.data);
       {
         error && (
           <p className="text-sm text-destructive text-center">{error}</p>

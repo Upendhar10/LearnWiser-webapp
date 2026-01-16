@@ -35,3 +35,4 @@
 - Login / Register pages
 - Auth slice
 - Logout enforced by the client
+- Public and Protected routes

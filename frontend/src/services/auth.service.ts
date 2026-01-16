@@ -22,4 +22,7 @@ export const authService = {
   register(payload: RegisterPayload) {
     return axiosClient.post("/auth/register", payload);
   },
+  getMe() {
+    return axiosClient.get("/auth/me");
+  },
 };
