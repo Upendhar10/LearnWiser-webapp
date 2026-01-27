@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Resource } from '../models/resource.model';
 import { Goal } from '../models/goal.model';
+import { LearningSession } from '../models/learningSession.model';
 
 // CREATE a Resource (POST)
 export const createResource = async (req: Request, res: Response) => {
@@ -37,7 +38,7 @@ export const createResource = async (req: Request, res: Response) => {
 
   const resource = await Resource.create({
     userId,
-    goalId: goal._id, // store ObjectId
+    goalRef: goal._id, // store ObjectId  of goal
     title,
     type,
     totalValue,
@@ -83,7 +84,7 @@ export const getResourceByGoal = async (req: Request, res: Response) => {
   }
 
   const resources = await Resource.find({
-    goalId: goal._id,
+    goalRef: goal._id,
     userId,
     isDeleted: false,
   }).sort({ createdAt: 1 });
@@ -152,6 +153,16 @@ export const deleteResource = async (req: Request, res: Response) => {
   if (!resource) {
     return res.status(404).json({ message: 'Resource not found' });
   }
+
+  await LearningSession.updateMany(
+    { resourceRef: resource._id, isDeleted: false },
+    {
+      $set: {
+        isDeleted: true,
+        deletedAt: new Date(),
+      },
+    },
+  );
 
   return res.status(200).json({ message: 'Resource deleted successfully' });
 };

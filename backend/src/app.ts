@@ -18,16 +18,24 @@ app.use(express.json());
 import authRouter from './routes/auth.route';
 import goalRouter from './routes/goal.route';
 import resourceRouter from './routes/resource.route';
-import learningLogRouter from './routes/learningLog.route';
-import resourceProgress from './routes/resourceProgress.route';
+import learningSessionRouter from './routes/learningSession.route';
+import resourceProgressRouter from './routes/resourceProgress.route';
 
 app.use('/api/v1/auth', authRouter);
+
 app.use('/api/v1/goals', goalRouter);
+
 app.use('/api/v1/goals/:goalId/resources', resourceRouter);
-app.use('/api/v1/goals/:goalId/logs', learningLogRouter);
+
 app.use(
-  './api/v1/goals/:goalId/resources/:resourceId/progress',
-  resourceProgress,
+  '/api/v1/goals/:goalId/resources/:resourceId/learning-sessions',
+  learningSessionRouter,
+);
+
+app.use('/api/v1/goals/:goalId/progress', resourceProgressRouter);
+app.use(
+  'api/v1/goals/:goalId/resources/:resourceId/progress',
+  resourceProgressRouter,
 );
 
 export default app;

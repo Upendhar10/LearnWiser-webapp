@@ -2,7 +2,7 @@ import { Schema, model, Types, Document } from 'mongoose';
 
 export interface ResourceDocument extends Document {
   userId: Types.ObjectId;
-  goalId: Types.ObjectId;
+  goalRef: Types.ObjectId;
 
   resourceId: string;
 
@@ -32,7 +32,7 @@ const resourceSchema = new Schema<ResourceDocument>(
       index: true,
     },
 
-    goalId: {
+    goalRef: {
       type: Schema.Types.ObjectId,
       ref: 'Goal',
       required: true,
