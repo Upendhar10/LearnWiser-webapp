@@ -10,7 +10,7 @@ export interface ResourceDocument extends Document {
   type: 'video' | 'article' | 'course' | 'book' | 'docs';
 
   totalValue: number;
-  totalUnit: 'pages' | 'minutes' | 'modules';
+  totalValueUnit: 'pages' | 'minutes' | 'modules';
 
   sourceUrl?: string;
   difficulty?: 'beginner' | 'intermediate' | 'advanced';
@@ -68,7 +68,7 @@ const resourceSchema = new Schema<ResourceDocument>(
       required: true,
     },
 
-    totalUnit: {
+    totalValueUnit: {
       type: String,
       enum: ['pages', 'minutes', 'modules'],
       required: true,
@@ -109,7 +109,7 @@ const resourceSchema = new Schema<ResourceDocument>(
 resourceSchema.pre('validate', function (this: ResourceDocument) {
   const allowedUnitsByType: Record<
     ResourceDocument['type'],
-    ResourceDocument['totalUnit'][]
+    ResourceDocument['totalValueUnit'][]
   > = {
     book: ['pages'],
     docs: ['pages'],
@@ -120,7 +120,7 @@ resourceSchema.pre('validate', function (this: ResourceDocument) {
 
   const allowed = allowedUnitsByType[this.type];
 
-  if (!allowed.includes(this.totalUnit)) {
+  if (!allowed.includes(this.totalValueUnit)) {
     throw new Error(
       `Resource type "${this.type}" only supports units: ${allowed.join(', ')}`,
     );

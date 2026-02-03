@@ -12,14 +12,14 @@ export const createResource = async (req: Request, res: Response) => {
     title,
     type,
     totalValue,
-    totalUnit,
+    totalValueUnit,
     sourceUrl,
     difficulty,
     instructor,
   } = req.body;
 
   // Basic validation
-  if (!title || !type || !totalValue || !totalUnit) {
+  if (!title || !type || !totalValue || !totalValueUnit) {
     return res.status(400).json({
       message: 'title, type, totalValue and totalUnit are required',
     });
@@ -42,7 +42,7 @@ export const createResource = async (req: Request, res: Response) => {
     title,
     type,
     totalValue,
-    totalUnit,
+    totalValueUnit,
     sourceUrl,
     difficulty,
     instructor,
@@ -100,7 +100,7 @@ export const updateResource = async (req: Request, res: Response) => {
     'title',
     'type',
     'totalValue',
-    'totalUnit',
+    'totalValueUnit',
     'sourceUrl',
     'difficulty',
     'instructor',
